@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ShippingNoteInsert"
+             targetNamespace="http://xmlns.edi.com.br/ferrovias/ShippingNote/ShippingNoteInsert"
+             xmlns:client="http://xmlns.edi.com.br/ferrovias/ShippingNote/ShippingNoteInsert"
+             xmlns:tns="http://xmlns.edi.com.br/ferrovias/ShippingNoteInput"
+             xmlns:tns1="http://xmlns.edi.com.br/ferrovias/ShippingNoteOutput"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://xmlns.edi.com.br/ferrovias/ShippingNoteInput"
+                  schemaLocation="ShippingNoteInput_V1.00c.xsd"/>
+    </xsd:schema>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://xmlns.edi.com.br/ferrovias/ShippingNoteOutput"
+                  schemaLocation="ShippingNoteOutput_V1.00c.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="ShippingNoteInsertRequestMessage">
+    <part name="payload" element="tns:ShippingNoteInput"/>
+  </message>
+  <message name="ShippingNoteInsertResponsetMessage">
+    <part name="payload" element="tns1:ShippingNoteOutput"/>
+  </message>
+  <portType name="ShippingNoteInsert">
+    <operation name="ShippingNoteInsert">
+      <input message="client:ShippingNoteInsertRequestMessage"/>
+      <output message="client:ShippingNoteInsertResponsetMessage"/>
+    </operation>
+  </portType>
+  <binding name="ShippingNoteInsertBiding" type="client:ShippingNoteInsert">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="ShippingNoteInsert">
+      <soap:operation style="document" soapAction="ShippingNoteInsert"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  <service name="ShippingNoteInsertService">
+    <port binding="client:ShippingNoteInsertBiding"
+          name="ShippingNoteInsertPort">
+      <soap:address location="http://soahom.mrs.com.br"/>
+    </port>
+  </service>
+</definitions>
+
+

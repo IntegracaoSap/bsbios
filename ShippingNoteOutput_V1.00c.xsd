@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://xmlns.edi.com.br/ferrovias/ShippingNoteOutput"
+           targetNamespace="http://xmlns.edi.com.br/ferrovias/ShippingNoteOutput"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+ <xs:element name="ShippingNoteOutput" type="ShippingNoteOutputType">
+  <xs:annotation>
+   <xs:documentation>Raiz do esquema de Nota de Expedição de retorno.</xs:documentation>
+  </xs:annotation>
+ </xs:element>
+ <xs:complexType name="ShippingNoteOutputType">
+  <xs:sequence>
+   <xs:element name="VersionIdentifier">
+    <xs:annotation>
+     <xs:documentation>Versão do Esquema Indica qual a versão Esquema foi
+                       utilizado na validação da mensagem. Formato: 9.99x
+                       (Versão + Release + Patch).</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:enumeration value="1.00C"/>
+      <xs:enumeration value="1.00c"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="DeliveryHeader">
+    <xs:annotation>
+     <xs:documentation>Cabeçalho da Mensagem Estrutura com as informações
+                       técnicas da mensagem.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="MessageDateTime" type="xs:dateTime">
+       <xs:annotation>
+        <xs:documentation>Data de Envio da Mensagem Indica a data e a hora do
+                          envio da mensagem. Formato: YYYY-MM-DDTHH:MM:SS</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="MessageSenderIdentification">
+       <xs:annotation>
+        <xs:documentation>Remetente da Mensagem Indica as informações do emissor
+                          da mensagem.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:complexContent>
+         <xs:extension base="PartnerIdentificationType">
+          <xs:sequence>
+           <xs:element name="SenderUser" minOccurs="0">
+            <xs:annotation>
+             <xs:documentation>Usuário que identifica o emissor com intuito de
+                               verificar as permissões deste nos sistemas (Ex.:
+                               CL000531, TR001234, etc.).</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+             <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+              <xs:maxLength value="10"/>
+             </xs:restriction>
+            </xs:simpleType>
+           </xs:element>
+          </xs:sequence>
+         </xs:extension>
+        </xs:complexContent>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="MessageReceiverIdentification"
+                  type="PartnerIdentificationType">
+       <xs:annotation>
+        <xs:documentation>Destinatário da Mensagem Indica as informações do
+                          recebedor da mensagem.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="MessageProtocol" type="xs:string">
+       <xs:annotation>
+        <xs:documentation>Identificador da Mensagem Identificador único
+                          alfanumérico que representa o Numero do Protocolo de
+                          envio gerado pelo Emissor da Nota de Expedição.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="MessageType">
+       <xs:annotation>
+        <xs:documentation>Tipo da Mensagem Valores Possíveis: DESP_FERR -
+                          Despacho entre ferrovias. NOTA_EXP_FERR - Nota de
+                          Expedição Ferroviária recebida via integraçao
+                          eletronica. NOTA_EXP_PORTAL - Nota de Expedição
+                          Ferroviária cadastrada via portal. NOTA_EXP_RODO -
+                          Nota de Expedição Rodoviária LOT_CAR - Lote
+                          Carregamento INC_VAG - Inclusão de Vagões</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:minLength value="1"/>
+         <xs:maxLength value="15"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:choice>
+    <xs:element name="ShippingNoteConfirmation">
+     <xs:annotation>
+      <xs:documentation>Confirmação da Nota de Expedição Estrutura que contém as
+                        informações dos CT-es gerados a partir de uma Nota de
+                        Expedição.</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="PartnerIdentification"
+                   type="PartnerIdentificationType">
+        <xs:annotation>
+         <xs:documentation>Identificação do parceiro no qual se originou a
+                           mensagem</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="ReferenceId" type="xs:string" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Informações de Identificação da Nota de Expedição</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="DateTimeGenerated" type="xs:dateTime">
+        <xs:annotation>
+         <xs:documentation>Data de Geração da Mensagem de Confirmação da Nota de
+                           Expedição. Formato: YYYY-MM-DDTHH:MM:SS</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="ShippingNoteManifests">
+        <xs:annotation>
+         <xs:documentation>Documentos de transporte gerados a partir da Nota de
+                           Expedição.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="ShippingNoteEletronicManifest" maxOccurs="30">
+           <xs:annotation>
+            <xs:documentation>Documento de Transporte eletronico gerado.</xs:documentation>
+           </xs:annotation>
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="DocumentKey" type="KeyType">
+              <xs:annotation>
+               <xs:documentation>Chave de Identificação do Documento</xs:documentation>
+              </xs:annotation>
+             </xs:element>
+             <xs:element name="CteXml">
+              <xs:annotation>
+               <xs:documentation>CT-e gerado a partir da Nota de Expedição.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+               <xs:sequence>
+                <xs:element name="xml" type="xs:anyType"/>
+               </xs:sequence>
+               <xs:attribute name="XmlVersion" use="required">
+                <xs:annotation>
+                 <xs:documentation>Versão do leiaute do CT-e</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:string">
+                  <xs:whiteSpace value="preserve"/>
+                  <xs:pattern value="1\.04"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:attribute>
+              </xs:complexType>
+             </xs:element>
+             <xs:element name="PdfDacte" type="xs:base64Binary" minOccurs="0">
+              <xs:annotation>
+               <xs:documentation>Binário do PDF do DACT-e do CT-e.</xs:documentation>
+              </xs:annotation>
+             </xs:element>
+             <xs:element name="Wagons" minOccurs="0">
+              <xs:annotation>
+               <xs:documentation>Vagoes Carregados e seus respectivos
+                                 Carregamentos</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+               <xs:sequence>
+                <xs:element name="WagonLoad" maxOccurs="unbounded">
+                 <xs:complexType>
+                  <xs:sequence>
+                   <xs:element name="WagonCode">
+                    <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                      <xs:maxLength value="7"/>
+                      <xs:minLength value="1"/>
+                     </xs:restriction>
+                    </xs:simpleType>
+                   </xs:element>
+                   <xs:element name="Loading" maxOccurs="unbounded">
+                    <xs:complexType>
+                     <xs:sequence>
+                      <xs:element name="LoadingSerial">
+                       <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                         <xs:length value="3"/>
+                        </xs:restriction>
+                       </xs:simpleType>
+                      </xs:element>
+                      <xs:element name="LoadingNumber">
+                       <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                         <xs:maxLength value="9"/>
+                        </xs:restriction>
+                       </xs:simpleType>
+                      </xs:element>
+                     </xs:sequence>
+                    </xs:complexType>
+                   </xs:element>
+                   <xs:element name="ClientReferenceId" minOccurs="0">
+                    <xs:annotation>
+                     <xs:documentation>Código do Documento Fiscal no Cliente
+                                       Sera o documento de referencia utilizado
+                                       pelo cliente para a emissao do documento
+                                       fiscal da mercadoria. Os documentos podem
+                                       ser por exemplo: Ordem de Venda, Ordem,
+                                       Encomenda, Pedido, etc.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                      <xs:minLength value="1"/>
+                      <xs:maxLength value="20"/>
+                     </xs:restriction>
+                    </xs:simpleType>
+                   </xs:element>
+                  </xs:sequence>
+                 </xs:complexType>
+                </xs:element>
+               </xs:sequence>
+              </xs:complexType>
+             </xs:element>
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element name="Comments" type="xs:string" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Comentários sobre o Carregamento gerado pela Nota de
+                           Expedição.</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+    <xs:element name="ShippingNoteResponse">
+     <xs:annotation>
+      <xs:documentation>Mensagem de Resposta (Reply) Estrutura que contém as
+                        informações de resposta da mensagem recebida. No caso da
+                        existência de erros ou advertências os mesmos são
+                        relacionados nesta estrutura.</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="MessageOk">
+        <xs:annotation>
+         <xs:documentation>Validação Estrutural da Mensagem Indica se a mensagem
+                           está correta ou não em relação ao XML Schema Valores
+                           Possíveis: Yes - XML de acordo com o Schema No - XML
+                           inválido segundo Schema Yes with warnings - XML
+                           válido segundo o Schema, mas com erros de negócio</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:enumeration value="Yes"/>
+          <xs:enumeration value="No"/>
+          <xs:enumeration value="Yes with warnings"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="MessageAccepted">
+        <xs:annotation>
+         <xs:documentation>Validação das Regras de Negócio da Mensagem Indica se
+                           a mensagem foi aceita ou não pelo destinatário e
+                           atualizada no seu sistema Valores Possíveis: Yes -
+                           Notas de Expedição Registradas No - Notas de
+                           Expedição Não Registradas por erro de negócio Not Yet
+                           - Notas de Expedição Não Registradas por erro
+                           operacional</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:enumeration value="Not Yet"/>
+          <xs:enumeration value="Yes"/>
+          <xs:enumeration value="No"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="MessageProtocol" type="xs:string">
+        <xs:annotation>
+         <xs:documentation>Protocolo de Recebimento Identificador único
+                           alfanumérico que representa o Numero do Protocolo de
+                           recebimento da Nota de Expedição.</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="ReferenceId" type="xs:string" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Informações de Identificação da Nota de Expedição
+                           Recebida</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="Wagons" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Vagões carregados e seus respectivos carregamentos.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="WagonLoad" maxOccurs="unbounded">
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="WagonCode">
+              <xs:annotation>
+               <xs:documentation>Código do Vagão</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+               <xs:restriction base="xs:string">
+                <xs:maxLength value="7"/>
+                <xs:minLength value="1"/>
+               </xs:restriction>
+              </xs:simpleType>
+             </xs:element>
+             <xs:element name="Loading">
+              <xs:annotation>
+               <xs:documentation>Carregamento do respectivo vagão considerando
+                                 para a NE recebida.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+               <xs:sequence>
+                <xs:element name="LoadingSerial">
+                 <xs:annotation>
+                  <xs:documentation>Série do Carregamento gerado pela Vale</xs:documentation>
+                 </xs:annotation>
+                 <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                   <xs:length value="3"/>
+                  </xs:restriction>
+                 </xs:simpleType>
+                </xs:element>
+                <xs:element name="LoadingNumber">
+                 <xs:annotation>
+                  <xs:documentation>Número do Carregamento gerado pela Vale</xs:documentation>
+                 </xs:annotation>
+                 <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                   <xs:maxLength value="9"/>
+                  </xs:restriction>
+                 </xs:simpleType>
+                </xs:element>
+               </xs:sequence>
+              </xs:complexType>
+             </xs:element>
+             <xs:element name="ClientReferenceId" minOccurs="0">
+              <xs:annotation>
+               <xs:documentation>Código do Documento Fiscal no Cliente Sera o
+                                 documento de referencia utilizado pelo cliente
+                                 para a emissao do documento fiscal da
+                                 mercadoria. Os documentos podem ser por
+                                 exemplo: Ordem de Venda, Ordem, Encomenda,
+                                 Pedido, etc.</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+               <xs:restriction base="xs:string">
+                <xs:minLength value="1"/>
+                <xs:maxLength value="20"/>
+               </xs:restriction>
+              </xs:simpleType>
+             </xs:element>
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element name="MessagesException" minOccurs="0">
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="MessageException" maxOccurs="unbounded">
+           <xs:annotation>
+            <xs:documentation>Erro e Exceções Estrutura de dados que indica os
+                              erros da mensagem ou do processamento da mensagem.</xs:documentation>
+           </xs:annotation>
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="ExceptionTypeCode" type="xs:string">
+              <xs:annotation>
+               <xs:documentation>Tipo de Erro Campo que indica o tipo de erro
+                                 encontrado, por exemplo se é um erro ou uma
+                                 advertência.</xs:documentation>
+              </xs:annotation>
+             </xs:element>
+             <xs:element name="ExceptionDescription">
+              <xs:annotation>
+               <xs:documentation>Descrição do Erro Estrutura de dados que
+                                 detalha a exceção ocorrida.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+               <xs:sequence>
+                <xs:element name="ErrorCode" type="xs:string" minOccurs="0">
+                 <xs:annotation>
+                  <xs:documentation>Código do erro</xs:documentation>
+                 </xs:annotation>
+                </xs:element>
+                <xs:element name="ErrorDescription" type="xs:string">
+                 <xs:annotation>
+                  <xs:documentation>Descrição do erro</xs:documentation>
+                 </xs:annotation>
+                </xs:element>
+               </xs:sequence>
+              </xs:complexType>
+             </xs:element>
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+   </xs:choice>
+   <xs:element name="OtherXML" type="xs:anyType" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Informações Complementares. Pré-requisito para
+                       utilização: Alinhamento entre as ferrovias.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <!-- TIPOS COMPLEXOS -->
+ <xs:complexType name="PartnerIdentificationType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dados para identificação do parceiro, que pode ser
+                     uma empresa, pessoa física ou outra organização</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="PartnerIdentificationDomain">
+    <xs:annotation>
+     <xs:documentation>Domínio da Identificação da Empresa Este campo indica que
+                       padrão/domínio/tipo de codificação o parceiro está
+                       enviando. Valores Possíveis: CPF - Código de Pessoa
+                       Física CNPJ - Código de Pessoa Jurídica VALE -
+                       Codificação interna da Vale MRS - Codificação interna da
+                       MRS ALL - Codificação interna da ALL Outros domínios
+                       podem ser acrescidos desde que previamente acordados</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="10"/>
+      <xs:enumeration value="CNPJ"/>
+      <xs:enumeration value="CPF"/>
+      <xs:enumeration value="VALE"/>
+      <xs:enumeration value="MRS"/>
+      <xs:enumeration value="ALL"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="BusinessIdentifier">
+    <xs:annotation>
+     <xs:documentation>Identificação da Empresa Indica a identificação única da
+                       empresa segundo a definição do domínio da informação.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:maxLength value="14"/>
+      <xs:minLength value="1"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="BusinessName">
+    <xs:annotation>
+     <xs:documentation>Razão Social ou Nome Indica a Razão Social ou o Nome da
+                       Empresa.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:simpleType name="KeyType">
+  <xs:annotation>
+   <xs:documentation>Tipo de Chave Eletrônica (44 caracteres numéricos)</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:string">
+   <xs:length value="44"/>
+   <xs:pattern value="[0-9]{44}"/>
+  </xs:restriction>
+ </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,2393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://xmlns.edi.com.br/ferrovias/ShippingNoteInput"
+           targetNamespace="http://xmlns.edi.com.br/ferrovias/ShippingNoteInput"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+ <xs:element name="ShippingNoteInput" type="ShippingNoteInputType">
+  <xs:annotation>
+   <xs:documentation>Raiz do esquema de Nota de Expedição.</xs:documentation>
+  </xs:annotation>
+ </xs:element>
+ <xs:complexType name="ShippingNoteInputType">
+  <xs:sequence>
+   <xs:element name="VersionIdentifier">
+    <xs:annotation>
+     <xs:documentation>Versão do Esquema Indica qual a versão Esquema foi
+                       utilizado na validação da mensagem. Formato: 9.99x
+                       (Versão + Release + Patch).</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:enumeration value="1.00C"/>
+      <xs:enumeration value="1.00c"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="DeliveryHeader">
+    <xs:annotation>
+     <xs:documentation>Cabeçalho da Mensagem Estrutura com as informações
+                       técnicas da mensagem.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="MessageDateTime" type="xs:dateTime">
+       <xs:annotation>
+        <xs:documentation>Data de Envio da Mensagem Indica a data e a hora do
+                          envio da mensagem. Formato: YYYY-MM-DDTHH:MM:SS</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="MessageSenderIdentification">
+       <xs:annotation>
+        <xs:documentation>Remetente da Mensagem Indica as informações do emissor
+                          da mensagem.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:complexContent>
+         <xs:extension base="PartnerIdentificationType">
+          <xs:sequence>
+           <xs:element name="SenderUser" minOccurs="0">
+            <xs:annotation>
+             <xs:documentation>Usuário que identifica o emissor com intuito de
+                               verificar as permissões deste nos sistemas (Ex.:
+                               CL000531, TR001234, etc.).</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+             <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+              <xs:maxLength value="10"/>
+             </xs:restriction>
+            </xs:simpleType>
+           </xs:element>
+          </xs:sequence>
+         </xs:extension>
+        </xs:complexContent>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="MessageReceiverIdentification"
+                  type="PartnerIdentificationType">
+       <xs:annotation>
+        <xs:documentation>Destinatário da Mensagem Indica as informações do
+                          recebedor da mensagem.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="MessageProtocol" type="xs:string">
+       <xs:annotation>
+        <xs:documentation>Identificador da Mensagem Identificador único
+                          alfanumérico que representa o Numero do Protocolo de
+                          envio gerado pelo Emissor da Nota de Expedição.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="MessageType">
+       <xs:annotation>
+        <xs:documentation>Tipo da Mensagem Valores Possíveis: DESP_FERR -
+                          Despacho entre ferrovias. NOTA_EXP_FERR - Nota de
+                          Expedição Ferroviária recebida via integraçao
+                          eletronica. NOTA_EXP_PORTAL - Nota de Expedição
+                          Ferroviária cadastrada via portal. NOTA_EXP_RODO -
+                          Nota de Expedição Rodoviária LOT_CAR - Lote
+                          Carregamento INC_VAG - Inclusão de Vagões</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:minLength value="1"/>
+         <xs:maxLength value="15"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="Transaction">
+       <xs:annotation>
+        <xs:documentation>Operação Indica a última transação realizada com a
+                          Nota de Expedição. Valores possíveis: INSERIR -
+                          Inserção ATUALIZAR - Atualização CANCELAR -
+                          Cancelamento</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:enumeration value="INSERIR"/>
+         <xs:enumeration value="ATUALIZAR"/>
+         <xs:enumeration value="CANCELAR"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="ReferenceId" type="xs:string" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Código Interno de Identificação da Nota de Expedição
+                          no parceiro onde a Nota Expedição foi gerada.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="DateTimeGenerated" type="xs:dateTime">
+       <xs:annotation>
+        <xs:documentation>Data e hora da geração da Nota de Expedição. Formato:
+                          YYYY-MM-DDTHH:MM:SS</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="Comments" type="xs:string" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Comentários da Nota de Expedição.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="ShippingNoteDetail">
+    <xs:annotation>
+     <xs:documentation>Corpo da Nota de Expedição Estrutura de dados que dá
+                       detalhes sobre a nota de expedição.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="FlowInformation">
+       <xs:annotation>
+        <xs:documentation>Fluxo do Transporte Estrutura que contém as
+                          informações para a identificação do Fluxo do
+                          Transporte e outras informações relacionadas ao fluxo.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:choice>
+         <xs:element name="FlowIdentification">
+          <xs:annotation>
+           <xs:documentation>Identificação do Fluxo diretamente pelo código.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+           <xs:sequence>
+            <xs:element name="FlowIdentificationDomain">
+             <xs:annotation>
+              <xs:documentation>Domínio do Código do Fluxo Este campo indica que
+                                padrão/domínio/tipo de codificação o parceiro
+                                está enviando. Valores Possíveis: VALE -
+                                Codificação interna da Vale MRS - Codificação
+                                interna da MRS ALL - Codificação interna da ALL
+                                Outros domínios podem ser acrescidos desde que
+                                previamente acordados</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:minLength value="1"/>
+               <xs:maxLength value="10"/>
+               <xs:enumeration value="VALE"/>
+               <xs:enumeration value="MRS"/>
+               <xs:enumeration value="ALL"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="FlowId">
+             <xs:annotation>
+              <xs:documentation>Identificação do Fluxo Código de Identificação
+                                do Fluxo seguindo o padrão definido no campo
+                                domain.</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:minLength value="1"/>
+               <xs:maxLength value="18"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="Description" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Descrição complementar do Fluxo</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:minLength value="1"/>
+               <xs:maxLength value="50"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+           </xs:sequence>
+          </xs:complexType>
+         </xs:element>
+         <xs:element name="FlowFeatures">
+          <xs:annotation>
+           <xs:documentation>Características do Fluxo Identificação do Fluxo
+                             através de suas características. Também serão
+                             utilizados os clientes informados na tag
+                             ShippingNoteHeader para a identificação do Fluxo.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+           <xs:sequence>
+            <xs:element name="Taker">
+             <xs:annotation>
+              <xs:documentation>Tomador do Serviço Cliente Correntista do Fluxo
+                                Estrutura de dados que caracteriza o Tomador do
+                                Serviço de Transporte (Quem contrata o serviço
+                                de transporte)</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="TakerFunction">
+                <xs:annotation>
+                 <xs:documentation>Função do Tomador do Serviço (quando já
+                                   informado em outra tag) Valores Possíveis: 0
+                                   - Remetente; 1 - Expedidor; 2 - Recebedor; 3
+                                   - Destinatário; 4 - Outros. Serão utilizadas
+                                   as informações contidas no respectivo grupo,
+                                   conforme indicado pelo conteúdo deste campo.
+                                   Obs.:Caso a função do Tomador seja
+                                   identificada como: - 0 ou 3, as informações
+                                   para encontrar o fluxo deverão ser
+                                   recuperadas do documento fiscal. - 1, 2 ou 4,
+                                   o grupo TakerInformation deverá ser informado.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:integer">
+                  <xs:enumeration value="0"/>
+                  <xs:enumeration value="1"/>
+                  <xs:enumeration value="2"/>
+                  <xs:enumeration value="3"/>
+                  <xs:enumeration value="4"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+               <xs:element name="TakerInformation"
+                           type="PartnerIdentificationType" minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Informações do Tomador do Serviço (quando não
+                                   informado em outra tag) Indica informações
+                                   sobre o Tomador do Serviço, quando ele é
+                                   diferente de todos os outros atores
+                                   informador na mensagem.</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="Payer" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Cliente de Faturamento Estrutura de dados que
+                                caracteriza o Cliente de Faturamento do Fluxo.
+                                Este campo é obrigatório no caso do Cliente de
+                                Faturamento ser diferente do Cliente Correntista
+                                do Fluxo.</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="PayerFunction">
+                <xs:annotation>
+                 <xs:documentation>Função do Pagador do Serviço (quando já
+                                   informado em outra tag) Valores Possíveis: 0
+                                   - Remetente; 1 - Expedidor; 2 - Recebedor; 3
+                                   - Destinatário; 4 - Outros. Serão utilizadas
+                                   as informações contidas no respectivo grupo,
+                                   conforme indicado pelo conteúdo deste campo.
+                                   Obs.:Caso a função do Tomador seja
+                                   identificada como: - 0 ou 3, as informações
+                                   para encontrar o fluxo deverão ser
+                                   recuperadas do documento fiscal. - 1, 2 ou 4,
+                                   o grupo PayerInformation deverá ser informado.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:integer">
+                  <xs:enumeration value="0"/>
+                  <xs:enumeration value="1"/>
+                  <xs:enumeration value="2"/>
+                  <xs:enumeration value="3"/>
+                  <xs:enumeration value="4"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+               <xs:element name="PayerInformation"
+                           type="PartnerIdentificationType" minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Informações do Pagador do Serviço (quando não
+                                   informado em outra tag) Indica informações
+                                   sobre o Tomador do Serviço, quando ele é
+                                   diferente de todos os outros atores
+                                   informador na mensagem.</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="LocationInformation" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Locais Informações dos locais do Fluxo Para a
+                                MRS, esta informação será obrigatória somente
+                                quando o transporte tiver inicio na ferrovia.
+                                Para Vale e ALL sempre obrigatório</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="OriginLocation" type="LocationType">
+                <xs:annotation>
+                 <xs:documentation>Estação ferroviária de Origem Sigla/Código da
+                                   Estação de Origem do Fluxo</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="OriginTerminal" type="LocationType"
+                           minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Terminal de Origem Sigla/Código do Terminal
+                                   de Origem do Fluxo Local de retirada/coleta
+                                   da carga Esta tag só deve ser preenchida caso
+                                   o local seja diferente do remetente.</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="DestinyLocation" type="LocationType">
+                <xs:annotation>
+                 <xs:documentation>Estação ferroviária de Destino Sigla/Código
+                                   da Estação de Destino do Fluxo</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="DestinyTerminal" type="LocationType"
+                           minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Terminal de Destino Sigla/Código do Terminal
+                                   de Destino do Fluxo Local de entrega da carga
+                                   Esta tag só deve ser preenchida caso o local
+                                   seja diferente do destinatário.</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="OriginExchangeLocation" type="LocationType"
+                           minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Patio de Origem de Intercâmbio Sigla/Código
+                                   do Patio de Origem de Intercâmbio</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="DestinyExchangeLocation" type="LocationType"
+                           minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Patio de Destino de Intercâmbio Sigla/Código
+                                   do Patio de Destino de Intercâmbio</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="ContractNumber" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Numero do contrato da prestação de serviço.</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:maxLength value="10"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+           </xs:sequence>
+          </xs:complexType>
+         </xs:element>
+        </xs:choice>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="DangerousProducts" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Produtos Perigosos Para as ferrovias trata-se de
+                          mercadoria perigosa. Estrutura que permite informar os
+                          produtos transportados bem como as suas restrições. No
+                          caso de transporte de Produto Perigoso essas
+                          informações são obrigatórias.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="DangerousProduct" maxOccurs="unbounded">
+          <xs:annotation>
+           <xs:documentation>Produto Perigoso</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+           <xs:sequence>
+            <xs:element name="CommodityIdentification"
+                        type="CommodityIdentificationType">
+             <xs:annotation>
+              <xs:documentation>Identificação da Mercadoria</xs:documentation>
+             </xs:annotation>
+            </xs:element>
+            <xs:element name="ONUCode">
+             <xs:annotation>
+              <xs:documentation>Número ONU/UN Ver a legislação de transporte de
+                                produtos perigosos aplicadas ao modal.</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:minLength value="1"/>
+               <xs:maxLength value="4"/>
+               <xs:pattern value="[1-9]{1}[0-9]{0,3}|ND"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="Name">
+             <xs:annotation>
+              <xs:documentation>Nome apropriado para o embarque</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:maxLength value="150"/>
+               <xs:minLength value="1"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="RiskClass">
+             <xs:annotation>
+              <xs:documentation>Classe ou subclasse/divisão, e risco
+                                subsidiário/risco secundário</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:maxLength value="40"/>
+               <xs:minLength value="1"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="PackingGroup" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Grupo de Embalagem</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:maxLength value="6"/>
+               <xs:minLength value="1"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="TotalQuantity" type="xs:decimal">
+             <xs:annotation>
+              <xs:documentation>Quantidade total por produto</xs:documentation>
+             </xs:annotation>
+            </xs:element>
+            <xs:element name="VolumeType" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Quantidade e tipo do produto/volumes</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:minLength value="1"/>
+               <xs:maxLength value="60"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+            <xs:element name="FirePoint" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Ponto de fulgor Preencher conforme a legislação
+                                de transporte de produtos perigosos aplicada ao
+                                modal. No caso de transporte rodoviário e
+                                ferroviário, este campo não é exigido.</xs:documentation>
+             </xs:annotation>
+             <xs:simpleType>
+              <xs:restriction base="xs:string">
+               <xs:minLength value="1"/>
+               <xs:maxLength value="6"/>
+              </xs:restriction>
+             </xs:simpleType>
+            </xs:element>
+           </xs:sequence>
+           <xs:attribute name="DangerousProductID" type="IDType" use="required">
+            <xs:annotation>
+             <xs:documentation>ID de Referência do Produto Perigoso</xs:documentation>
+            </xs:annotation>
+           </xs:attribute>
+          </xs:complexType>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="CommodityDetail" type="xs:string" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Descrição do Detalhe Mercadoria Necessário para
+                          identificação de qualidade da mercadoria
+                          (empilhamento).</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="IsCombinedCargo">
+       <xs:annotation>
+        <xs:documentation>É Carregamento Múltiplo Identificação se a Nota de
+                          Expedição envolve o carregamento de um mesmo vagão
+                          mais de uma vez. (Ex. S ou N)</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:enumeration value="N"/>
+         <xs:enumeration value="S"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="IsLastCombinedCargo">
+       <xs:annotation>
+        <xs:documentation>É Último Carregamento Identificação se a Nota de
+                          Expedição refere-se ao último carregamento de um mesmo
+                          vagão. (Ex. S ou N)</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:enumeration value="N"/>
+         <xs:enumeration value="S"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:choice minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>VALE: Obrigatório para a Vale.</xs:documentation>
+       </xs:annotation>
+       <xs:element name="BatchLoad">
+        <xs:annotation>
+         <xs:documentation>Lotes do Carregamento [Pendente maiores definições de
+                           como vai ser tratado, principalmente os documentos
+                           fiscais por Vagão ou pelo Lote] Informações dos Lotes
+                           que serão carregados para a Nota de Expedição. Este
+                           item deve ser informado quando o Carregamento for
+                           feito em lotes.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="BatchIdDomain">
+           <xs:annotation>
+            <xs:documentation>Domínio do Número do Lote Este campo indica que
+                              padrão/domínio/tipo de codificação o parceiro está
+                              enviando. Valores Possíveis: VALE - Codificação
+                              interna da Vale MRS - Codificação interna da MRS
+                              ALL - Codificação interna da ALL Outros domínios
+                              podem ser acrescidos desde que previamente
+                              acordados</xs:documentation>
+           </xs:annotation>
+           <xs:simpleType>
+            <xs:restriction base="xs:string">
+             <xs:minLength value="1"/>
+             <xs:maxLength value="10"/>
+             <xs:enumeration value="VALE"/>
+             <xs:enumeration value="MRS"/>
+             <xs:enumeration value="ALL"/>
+            </xs:restriction>
+           </xs:simpleType>
+          </xs:element>
+          <xs:element name="BatchIdNumber" type="xs:string">
+           <xs:annotation>
+            <xs:documentation>Número do Lote. Pode ser um número específico ou o
+                              número de um vagão / caminhão</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfVehicles" type="xs:integer">
+           <xs:annotation>
+            <xs:documentation>Número de veículo</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="TotalWeight" type="WeightType">
+           <xs:annotation>
+            <xs:documentation>Peso Total do Lote</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="Waybills">
+           <xs:annotation>
+            <xs:documentation>Documentos Fiscais do Lote</xs:documentation>
+           </xs:annotation>
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="WaybillInvoiceReference" maxOccurs="unbounded">
+              <xs:annotation>
+               <xs:documentation>Documento Fiscal</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+               <xs:attribute name="WaybillInvoceID" type="IDType"
+                             use="required">
+                <xs:annotation>
+                 <xs:documentation>ID de Referência do Documento Fiscal</xs:documentation>
+                </xs:annotation>
+               </xs:attribute>
+              </xs:complexType>
+             </xs:element>
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element name="WagonLoad">
+        <xs:annotation>
+         <xs:documentation>Vagões do Carregamento Informações dos vagões que
+                           serão carregados para a Nota de Expedição. Esse item
+                           deve ser informado quando o Carregamento envolver
+                           apenas vagões, ou seja, não for por lote ou
+                           envolvendo contêineres.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="WagonInformation" type="WagonInformationType"
+                      maxOccurs="unbounded">
+           <xs:annotation>
+            <xs:documentation>Vagão do Carregamento Estrutura de dados que
+                              caracteriza o vagão utilizado no carregamento</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:choice>
+      <xs:element name="Waybills">
+       <xs:annotation>
+        <xs:documentation>Documentos Fiscais Estrutura de dados que contém
+                          informações sobre os documentos fiscais que estão
+                          sendo transportado</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="WaybillInformation" maxOccurs="unbounded">
+          <xs:annotation>
+           <xs:documentation>Documento Fiscal</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+           <xs:complexContent>
+            <xs:extension base="WaybillInvoiceType"/>
+           </xs:complexContent>
+          </xs:complexType>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="Items" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Itens / Contêineres Estrutura que permite informar as
+                          características do item a ser transportado.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="ItemInformation" maxOccurs="unbounded">
+          <xs:annotation>
+           <xs:documentation>Item / Contêiner</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+           <xs:sequence>
+            <xs:element name="ItemType">
+             <xs:annotation>
+              <xs:documentation>Tipo de Item de Carga</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="ItemTypeDomain">
+                <xs:annotation>
+                 <xs:documentation>Dominio da Identificação do Tipo de Item Este
+                                   campo indica que padrão/domínio/tipo de
+                                   codificação o parceiro está enviando. Valores
+                                   Possíveis: VALE - Codificação interna da Vale
+                                   MRS - Codificação interna da MRS ALL -
+                                   Codificação interna da ALL Outros domínios
+                                   podem ser acrescidos desde que previamente
+                                   acordados</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:string">
+                  <xs:minLength value="1"/>
+                  <xs:maxLength value="10"/>
+                  <xs:enumeration value="VALE"/>
+                  <xs:enumeration value="MRS"/>
+                  <xs:enumeration value="ALL"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+               <xs:element name="ItemTypeIdentification">
+                <xs:annotation>
+                 <xs:documentation>Código de corresponde ao tipo do item de
+                                   acordo com o domíniio informado na tag
+                                   'domain'. Na maioria da vezes preenchido com
+                                   'CONTEINER'.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:string">
+                  <xs:minLength value="1"/>
+                  <xs:maxLength value="15"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+               <xs:element name="Description" minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Descrição do Tipo do Item</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:string">
+                  <xs:minLength value="1"/>
+                  <xs:maxLength value="50"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="ItemIdentification">
+             <xs:annotation>
+              <xs:documentation>Identificação do Item/Contêiner</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="ItemIdentificationDomain">
+                <xs:annotation>
+                 <xs:documentation>Domínio da Identificação do Item Este campo
+                                   indica que padrão/domínio/tipo de codificação
+                                   o parceiro está enviando. Valores Possíveis:
+                                   VALE - Codificação interna da Vale MRS -
+                                   Codificação interna da MRS ALL - Codificação
+                                   interna da ALL Outros domínios podem ser
+                                   acrescidos desde que previamente acordados</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:string">
+                  <xs:enumeration value="VALE"/>
+                  <xs:enumeration value="MRS"/>
+                  <xs:enumeration value="ALL"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+               <xs:element name="ItemIdentificationCode" type="xs:string">
+                <xs:annotation>
+                 <xs:documentation>Código do Item de Carga Na maioria das vezes
+                                   indica o código do Contêiner</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="Description" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                 <xs:documentation>Descrição do Item</xs:documentation>
+                </xs:annotation>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="Seals" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Lacres Informações sobre os números dos lacres.</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="SealNumber" maxOccurs="unbounded">
+                <xs:annotation>
+                 <xs:documentation>Número do Lacre</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                 <xs:restriction base="xs:string">
+                  <xs:minLength value="1"/>
+                  <xs:maxLength value="20"/>
+                 </xs:restriction>
+                </xs:simpleType>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="Waybills" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Documentos Fiscais dos Itens de Carga</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="WaybillInvoiceReference" maxOccurs="unbounded">
+                <xs:annotation>
+                 <xs:documentation>Documento Fiscal</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                 <xs:attribute name="WaybillInvoceID" type="IDType"
+                               use="required">
+                  <xs:annotation>
+                   <xs:documentation>ID de Referência do Documento Fiscal</xs:documentation>
+                  </xs:annotation>
+                 </xs:attribute>
+                </xs:complexType>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+            <xs:element name="ShippingNoteManifests" minOccurs="0">
+             <xs:annotation>
+              <xs:documentation>Documentos de Transporte Anterior do Item de
+                                Carga</xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+              <xs:sequence>
+               <xs:element name="ShippingNoteManifestReference"
+                           maxOccurs="unbounded">
+                <xs:annotation>
+                 <xs:documentation>Documento de Transporte</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                 <xs:attribute name="ShippingNoteManifestID" use="required"
+                               type="IDType">
+                  <xs:annotation>
+                   <xs:documentation>ID de Referência do Documento de Transporte</xs:documentation>
+                  </xs:annotation>
+                 </xs:attribute>
+                </xs:complexType>
+               </xs:element>
+              </xs:sequence>
+             </xs:complexType>
+            </xs:element>
+           </xs:sequence>
+           <xs:attribute name="ItemID" type="IDType" use="required">
+            <xs:annotation>
+             <xs:documentation>ID de Referência do Item</xs:documentation>
+            </xs:annotation>
+           </xs:attribute>
+          </xs:complexType>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="ShippingNoteManifests" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Documentos de Transporte Quando se aplica: 1) CT-e
+                          emitido pela Ferrovia de Origem onde o CT-e for de
+                          faturamento no destino, com operação de trafego mutuo.
+                          2) Transporte Multimodal, informações do documento do
+                          transporte multimodal. Por exemplo, CTMC. 3) CT-e
+                          emitido pela Ferrovia de Origem onde o CT-e for de
+                          faturamento na origem, com operação de trafego mutuo.
+                          Será usado como referência interna, não será gerado um
+                          novo CT-e.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="ShippingNoteManifest" type="ShippingNoteManifestType"
+                     maxOccurs="unbounded">
+          <xs:annotation>
+           <xs:documentation>Documento de Transporte</xs:documentation>
+          </xs:annotation>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="TotalValue" type="ValueType">
+       <xs:annotation>
+        <xs:documentation>Valor Total da Nota de Expedição Define o valor total
+                          em moeda corrente, sumarizado de todas as Notas
+                          Fiscais do carregamento. Nao confundir com o valor da
+                          Nota fiscal, que sera individual e referente a cada
+                          uma das Notas Fiscais dos vagoes. (*) No caso de
+                          recebimento de Containers Vazios esse campo podera vir
+                          com valor zerado e assim sendo, obrigatoriamente,
+                          devera existir um item (container)</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="ServiceOrigin">
+       <xs:annotation>
+        <xs:documentation>Origem da Prestação de Serviço Local e endereco Origem
+                          da Prestacao do Serviço de Transporte.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="Origin">
+          <xs:annotation>
+           <xs:documentation>Origem da Prestação Valores Possíveis: 0 -
+                             Remetente; 1 - Expedidor; 2 - Outro Local 3 - Local
+                             Ferroviário Serao utilizadas as informacoes
+                             contidas no respectivo grupo, conforme indicado
+                             pelo conteudo deste campo</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+           <xs:restriction base="xs:string">
+            <xs:whiteSpace value="preserve"/>
+            <xs:enumeration value="0"/>
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+           </xs:restriction>
+          </xs:simpleType>
+         </xs:element>
+         <xs:element name="PickupLocation" type="PartnerInformationType"
+                     minOccurs="0">
+          <xs:annotation>
+           <xs:documentation>Identificacao do Local de Retirada Informar sempre
+                             quando for diferente do endereco do remetente, ou
+                             seja, que a tag 'Origin' for diferente de 0 (zero)
+                             Atenção: A Identificação da Empresa refere-se à
+                             empresa responsável pelo Local de Retirada e o
+                             Endereço refere-se ao Local da Retirada.</xs:documentation>
+          </xs:annotation>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="ServiceDestiny">
+       <xs:annotation>
+        <xs:documentation>Destino da Prestação do Serviço Local e endereco
+                          Destino da Prestacao do Serviço de Transporte.</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="Destiny">
+          <xs:annotation>
+           <xs:documentation>Destino da Prestação Valores Possíveis: 0 -
+                             Destinatário; 1 - Recebedor; 2 - Outro local; 3 -
+                             Local Ferroviário.</xs:documentation>
+           <xs:documentation>Serao utilizadas as informacoes contidas no
+                             respectivo grupo, conforme indicado pelo conteudo
+                             deste campo</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+           <xs:restriction base="xs:string">
+            <xs:whiteSpace value="preserve"/>
+            <xs:enumeration value="0"/>
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+           </xs:restriction>
+          </xs:simpleType>
+         </xs:element>
+         <xs:element name="DeliveryLocation" type="PartnerInformationType"
+                     minOccurs="0">
+          <xs:annotation>
+           <xs:documentation>Identificacao do Local de Entrega Informar apenas
+                             quando for diferente do endereco do destinatario,
+                             ou seja, que a tag 'Destiny' for diferente de 0
+                             (zero) Atenção: A Identificação da Empresa
+                             refere-se à empresa responsável pelo Local de
+                             Entrega e o Endereço refere-se ao Local da Entrega.</xs:documentation>
+          </xs:annotation>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="OtherXML" type="xs:anyType" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Informações Complementares. Pré-requisito para
+                          utilização: Alinhamento entre as ferrovias.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="PartnerInformationType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que descrimina as informações mais comuns de
+                     uma empresa, pessoa física ou organização</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="PartnerIdentification" type="PartnerIdentificationType">
+    <xs:annotation>
+     <xs:documentation>Identificação da Empresa Informações gerais de
+                       identificação da Empresa.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="PartnerName" type="xs:string" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Nome Fantasia Indica o Nome Fantasia da Empresa.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="StateRegistration">
+    <xs:annotation>
+     <xs:documentation>Número da Inscrição Estadual</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{0,14}|ISENTO|PR[0-9]{4,8}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="SUFRAMARegistration" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Inscrição na SUFRAMA</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{8,9}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="TelephoneNumber" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Telefone de Contato Identifica o número de telefone de
+                       contato.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="7"/>
+      <xs:maxLength value="12"/>
+      <xs:pattern value="[0-9]{7,12}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="EmailAddress" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>E-mail de Contato Identifica o endereço de e-mail de
+                       contato.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+      <xs:pattern value="[^@]+@[^\.]+\..+"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="Address" type="AddressType">
+    <xs:annotation>
+     <xs:documentation>Endereço da Empresa Informações do endereço da Empresa.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="PartnerIdentificationType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dados para identificação do parceiro, que pode ser
+                     uma empresa, pessoa física ou outra organização</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="PartnerIdentificationDomain">
+    <xs:annotation>
+     <xs:documentation>Domínio da Identificação da Empresa Este campo indica que
+                       padrão/domínio/tipo de codificação o parceiro está
+                       enviando. Valores Possíveis: CPF - Código de Pessoa
+                       Física CNPJ - Código de Pessoa Jurídica VALE -
+                       Codificação interna da Vale MRS - Codificação interna da
+                       MRS ALL - Codificação interna da ALL Outros domínios
+                       podem ser acrescidos desde que previamente acordados</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="10"/>
+      <xs:enumeration value="CNPJ"/>
+      <xs:enumeration value="CPF"/>
+      <xs:enumeration value="VALE"/>
+      <xs:enumeration value="MRS"/>
+      <xs:enumeration value="ALL"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="BusinessIdentifier">
+    <xs:annotation>
+     <xs:documentation>Identificação da Empresa Indica a identificação única da
+                       empresa segundo a definição do domínio da informação.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:maxLength value="14"/>
+      <xs:minLength value="1"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="BusinessName">
+    <xs:annotation>
+     <xs:documentation>Razão Social ou Nome Indica a Razão Social ou o Nome da
+                       Empresa.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="AddressType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que especifica um endereço</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="AddressLine">
+    <xs:annotation>
+     <xs:documentation>Logradouro Indica o logradouro do endereço.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="255"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="Number">
+    <xs:annotation>
+     <xs:documentation>Número Indica o número do endereço.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="AddressComplement" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Complemento Indica o complemento de um endereço.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="DistrictName" type="xs:string">
+    <xs:annotation>
+     <xs:documentation>Bairro Indica o bairro do endereço.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="IBGECityCode">
+    <xs:annotation>
+     <xs:documentation>Código do Município Indica o código da cidade ou
+                       municipio segundo o IBGE. Informar 9999999 para operações
+                       com o exterior.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{7}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="CityName">
+    <xs:annotation>
+     <xs:documentation>Município Código do município do endereço. Informar
+                       EXTERIOR para operações com o exterior.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="IBGEStateCode" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Código da UF Indica o código do estado ou unidade
+                       federativa segundo o IBGE. Não informar para operações
+                       com o exterior.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:length value="2"/>
+      <xs:enumeration value="11"/>
+      <xs:enumeration value="12"/>
+      <xs:enumeration value="13"/>
+      <xs:enumeration value="14"/>
+      <xs:enumeration value="15"/>
+      <xs:enumeration value="16"/>
+      <xs:enumeration value="17"/>
+      <xs:enumeration value="21"/>
+      <xs:enumeration value="22"/>
+      <xs:enumeration value="23"/>
+      <xs:enumeration value="24"/>
+      <xs:enumeration value="25"/>
+      <xs:enumeration value="26"/>
+      <xs:enumeration value="27"/>
+      <xs:enumeration value="28"/>
+      <xs:enumeration value="29"/>
+      <xs:enumeration value="31"/>
+      <xs:enumeration value="32"/>
+      <xs:enumeration value="33"/>
+      <xs:enumeration value="35"/>
+      <xs:enumeration value="41"/>
+      <xs:enumeration value="42"/>
+      <xs:enumeration value="43"/>
+      <xs:enumeration value="50"/>
+      <xs:enumeration value="51"/>
+      <xs:enumeration value="52"/>
+      <xs:enumeration value="53"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="StateCode">
+    <xs:annotation>
+     <xs:documentation>Sigla da UF Indica a sigla do estado ou unidade
+                       federativa do endereço. Exemplo: ES - Espírito Santo
+                       Informar EX para operações com o exterior.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:length value="2"/>
+      <xs:enumeration value="AC"/>
+      <xs:enumeration value="AL"/>
+      <xs:enumeration value="AM"/>
+      <xs:enumeration value="AP"/>
+      <xs:enumeration value="BA"/>
+      <xs:enumeration value="CE"/>
+      <xs:enumeration value="DF"/>
+      <xs:enumeration value="ES"/>
+      <xs:enumeration value="GO"/>
+      <xs:enumeration value="MA"/>
+      <xs:enumeration value="MG"/>
+      <xs:enumeration value="MS"/>
+      <xs:enumeration value="MT"/>
+      <xs:enumeration value="PA"/>
+      <xs:enumeration value="PB"/>
+      <xs:enumeration value="PE"/>
+      <xs:enumeration value="PI"/>
+      <xs:enumeration value="PR"/>
+      <xs:enumeration value="RJ"/>
+      <xs:enumeration value="RN"/>
+      <xs:enumeration value="RO"/>
+      <xs:enumeration value="RR"/>
+      <xs:enumeration value="RS"/>
+      <xs:enumeration value="SC"/>
+      <xs:enumeration value="SE"/>
+      <xs:enumeration value="SP"/>
+      <xs:enumeration value="TO"/>
+      <xs:enumeration value="EX"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="NationalPostalCode">
+    <xs:annotation>
+     <xs:documentation>CEP Indica o código de endereçamento postal do endereço.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:length value="8"/>
+      <xs:pattern value="[0-9]{8}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="BACENCountryCode" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Código do País Indica o código do país do endereço
+                       sengundo o Banco Central (BACEN)</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="4"/>
+      <xs:pattern value="[0-9]{1,4}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="CountryName" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>País Indica o nome do páis do endereço.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="ShippingNoteManifestType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que define um Documento de Transporte</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="IssuerShippingNoteManifest" type="PartnerInformationType">
+    <xs:annotation>
+     <xs:documentation>Emitente do Documento de Transporte</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="ShippingNoticeManifestType">
+    <xs:annotation>
+     <xs:documentation>Tipo do Documento de Transporte Preencher com: 00 - CTRC
+                       01 - CTAC 02 - ACT 03 - NF Modelo 7 04 - NF Modelo 27 05
+                       - Conhecimento Aéreo Nacional 06 - CTMC 07 - ATRE 08 -
+                       DTA (Despacho de Transito Aduaneiro) 09 - Conhecimento
+                       Aéreo Internacional 10 - Conhecimento - Carta de Porte
+                       Internacional 11 - Conhecimento Avulso 12 - TIF
+                       (Transporte Internacional Ferroviário) 50 - CT-e (CT-e é
+                       o único documento eletrônico possível atualmente). Quando
+                       o CTMC-e for criado, um número para esse documento deverá
+                       ser definido.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:enumeration value="00"/>
+      <xs:enumeration value="01"/>
+      <xs:enumeration value="02"/>
+      <xs:enumeration value="03"/>
+      <xs:enumeration value="04"/>
+      <xs:enumeration value="05"/>
+      <xs:enumeration value="06"/>
+      <xs:enumeration value="07"/>
+      <xs:enumeration value="08"/>
+      <xs:enumeration value="09"/>
+      <xs:enumeration value="10"/>
+      <xs:enumeration value="11"/>
+      <xs:enumeration value="12"/>
+      <xs:enumeration value="50"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:choice>
+    <xs:element name="ShippingNoteEletronicManifest">
+     <xs:annotation>
+      <xs:documentation>Documento de Transporte Eletrônico</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="DocumentKey" type="KeyType">
+        <xs:annotation>
+         <xs:documentation>Chave de Identificação do Documento</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="SenderType">
+        <xs:annotation>
+         <xs:documentation>Forma de emissão do CT-e 1 - Normal 2 - Contingencia
+                           Obs.:Em caso de contingência, não será consistida
+                           chave na Sefaz.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:whiteSpace value="preserve"/>
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="ContingencyDateTime" type="xs:dateTime" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Data e hora Contingência</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="Justification" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Justificativa da entrada em contingencia.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="15"/>
+          <xs:maxLength value="256"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+    <xs:element name="ShippingNotePaperManifest">
+     <xs:annotation>
+      <xs:documentation>Documento de Transporte em Papel</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="DocumentSerial">
+        <xs:annotation>
+         <xs:documentation>Série do Documento</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="1"/>
+          <xs:maxLength value="3"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="DocumentSubSerial" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Sub Série do Documento</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="1"/>
+          <xs:maxLength value="2"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="DocumentCode">
+        <xs:annotation>
+         <xs:documentation>Código do Documento</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:pattern value="[0-9]{1,20}"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="IssueDate" type="xs:dateTime">
+        <xs:annotation>
+         <xs:documentation>Data de Emissão do Documento Formato: YYYY-MM-DD</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+   </xs:choice>
+   <xs:element name="Waybills" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Documentos Fiscais do Documento Transporte</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="WaybillInvoiceReference" maxOccurs="unbounded">
+       <xs:annotation>
+        <xs:documentation>Documento Fiscal</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:attribute name="WaybillInvoceID" type="IDType" use="required">
+         <xs:annotation>
+          <xs:documentation>ID de Referência do Documento Fiscal</xs:documentation>
+         </xs:annotation>
+        </xs:attribute>
+       </xs:complexType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="PdfDacte" type="xs:base64Binary" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Binário do PDF do DACT-e do CT-e.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+  <xs:attribute name="ShippingNoteManifestID" type="IDType" use="required">
+   <xs:annotation>
+    <xs:documentation>ID de Referência do Documento de Transporte</xs:documentation>
+   </xs:annotation>
+  </xs:attribute>
+ </xs:complexType>
+ <xs:complexType name="WeightType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que define o Peso com sua unidade de Medida.</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="Weight" type="Decimal_15_3_Type">
+    <xs:annotation>
+     <xs:documentation>Indica o valor numérico do peso.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="UnitOfMeasure" type="UnitOfMeasureType">
+    <xs:annotation>
+     <xs:documentation>Indica a unidade de medida do peso. Valores Possíveis: KG
+                       - Quilogramas TON - Toneladas</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="WaybillInvoiceType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado para identificar uma determinado documento
+                     fiscal</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="WaybillInvoiceInformation" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Informações comuns dos documentos fiscais MRS: Somente
+                       preencher se não for documento eletrônico. VALE: Sempre
+                       informar.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="WaybillInvoiceSerial" type="xs:string" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Número de série do documento fiscal</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="WaybillInvoiceNumber" type="xs:string">
+       <xs:annotation>
+        <xs:documentation>Número do Documento Fiscal</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="Sender" type="PartnerInformationType">
+       <xs:annotation>
+        <xs:documentation>Identificacao do emitente do documento fiscal cliente.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="Consignee" type="PartnerInformationType">
+       <xs:annotation>
+        <xs:documentation>Identificacao do Destinatario do documento fiscal
+                          cliente.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="CommodityInformation">
+       <xs:annotation>
+        <xs:documentation>Mercadoria Informações para identificação da
+                          Mercadoria do Documento Fiscal</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="CommodityIdentification"
+                     type="CommodityIdentificationType">
+          <xs:annotation>
+           <xs:documentation>Identificação da Mercadoria Codificação da
+                             Mercadoria a partir de um domínio específico.</xs:documentation>
+          </xs:annotation>
+         </xs:element>
+         <xs:element name="CommodityShortDescription" minOccurs="0">
+          <xs:annotation>
+           <xs:documentation>Descrição Resumida da Mercadoria</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+           <xs:restriction base="xs:string">
+            <xs:maxLength value="30"/>
+           </xs:restriction>
+          </xs:simpleType>
+         </xs:element>
+         <xs:element name="CommodityFullDescription" minOccurs="0">
+          <xs:annotation>
+           <xs:documentation>Descrição Detalhada da Mercadoria</xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+           <xs:restriction base="xs:string">
+            <xs:maxLength value="255"/>
+           </xs:restriction>
+          </xs:simpleType>
+         </xs:element>
+        </xs:sequence>
+       </xs:complexType>
+      </xs:element>
+      <xs:element name="ClientReferenceId" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Código do Documento Fiscal no Cliente Sera o documento
+                          de referencia utilizado pelo cliente para a emissao do
+                          documento fiscal da mercadoria. Os documentos podem
+                          ser por exemplo: Ordem de Venda, Ordem, Encomenda,
+                          Pedido, etc.</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:minLength value="1"/>
+         <xs:maxLength value="20"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="WaybillInvoiceType">
+       <xs:annotation>
+        <xs:documentation>Tipo do Documento Fiscal Preencher com: 0 - Entrada 1
+                          - Saída</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:length value="1"/>
+         <xs:enumeration value="0"/>
+         <xs:enumeration value="1"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="IssueDate" type="xs:date">
+       <xs:annotation>
+        <xs:documentation>Data da emissão do Documento Fiscal Formato: YYYY-MM-DD</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="WaybillInvoiceCFOP" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>CFOP Predominante VALE: Sempre obrigatorio.</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:pattern value="[123567][0-9]([0-9][1-9]|[1-9][0-9])"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="WaybillInvoiceWeight" type="WeightType">
+       <xs:annotation>
+        <xs:documentation>Peso no Documento Fiscal</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="WaybillInvoiceQuantity" type="QuantityType"
+                  minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Quantidade no Documento Fiscal</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="TotalValue" type="ValueType">
+       <xs:annotation>
+        <xs:documentation>Valor Total da Nota Fiscal</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="DangerousProducts" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Produtos Perigosos do Documento Fiscal</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="DangerousProductReference" maxOccurs="unbounded">
+       <xs:annotation>
+        <xs:documentation>Produto Perigoso</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:attribute name="DangerousProductID" type="IDType" use="required">
+         <xs:annotation>
+          <xs:documentation>ID de Referência do Produto Perigoso</xs:documentation>
+         </xs:annotation>
+        </xs:attribute>
+       </xs:complexType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:choice>
+    <xs:element name="WaybillInvoice">
+     <xs:annotation>
+      <xs:documentation>Dados do Documento Fiscal quando NF de papel</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="WaybillInvoiceTallyNumber" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Número do Romaneio</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="1"/>
+          <xs:maxLength value="20"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="WaybillInvoiceOrder" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Número do Pedido da NF</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="1"/>
+          <xs:maxLength value="20"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="WaybillInvoiceTemplate">
+        <xs:annotation>
+         <xs:documentation>Modelo do documento fiscal Preencher com: 01 - NF
+                           Modelo 01/1A e Avulsa; 04 - NF de Produtor</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:length value="2"/>
+          <xs:enumeration value="01"/>
+          <xs:enumeration value="04"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="WaybillInvoiceICMSTaxBase" type="Decimal_13_2_Type">
+        <xs:annotation>
+         <xs:documentation>Valor da Base de Cálculo do ICMS</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="WaybillInvoiceICMSTaxValue" type="Decimal_13_2_Type">
+        <xs:annotation>
+         <xs:documentation>Valor Total do ICMS</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="WaybillInvoiceICMSSTTaxBase" type="Decimal_13_2_Type">
+        <xs:annotation>
+         <xs:documentation>Valor da Base de Cálculo do ICMS ST</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="WaybillInvoiceICMSSTTaxValue" type="Decimal_13_2_Type">
+        <xs:annotation>
+         <xs:documentation>Valor Total do ICMS ST</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="ProductTotalValue" type="ValueType">
+        <xs:annotation>
+         <xs:documentation>Valor Total do Produto</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="PIN" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>PIN Atribuído pela SUFRAMA para a operação</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:pattern value="[1-9]{1}[0-9]{1,8}"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+    <xs:element name="EletronicWaybillInvoice">
+     <xs:annotation>
+      <xs:documentation>Dados do Documento Fiscal quando NF-e</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="WaybillInvoiceKey" type="KeyType">
+        <xs:annotation>
+         <xs:documentation>Chave da NF-e quando existir</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="SenderType">
+        <xs:annotation>
+         <xs:documentation>Forma de emissão do NF-e 1 - Normal 2 - Contingência</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:whiteSpace value="preserve"/>
+          <xs:enumeration value="1"/>
+          <xs:enumeration value="2"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="ContingencyDateTime" type="xs:dateTime" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Data e hora Contingência Formato: YYYY-MM-DDTHH:MM:SS</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+       <xs:element name="Justification" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Justificativa da entrada em contingencia.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="15"/>
+          <xs:maxLength value="256"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="PIN" type="xs:string" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>PIN Atribuído pela SUFRAMA para a operação</xs:documentation>
+        </xs:annotation>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+    <xs:element name="OtherTypeWaybillInvoice">
+     <xs:annotation>
+      <xs:documentation>Dados do Documento Fiscal quando não for NF ou NF-e</xs:documentation>
+     </xs:annotation>
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="FiscalDocumentType">
+        <xs:annotation>
+         <xs:documentation>Tipo do Documento Fiscal (Quando não for NF ou NF-e)
+                           Preencher com: 00 - Declaração (Exemplo: DUT,
+                           Declaração de Propriedade, ...) 10 - Dutoviário 99 -
+                           Outros (Exemplo: VTA, Despacho, DTA)</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:length value="2"/>
+          <xs:enumeration value="00"/>
+          <xs:enumeration value="10"/>
+          <xs:enumeration value="99"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+       <xs:element name="FiscalDocumentDescription" minOccurs="0">
+        <xs:annotation>
+         <xs:documentation>Descrição usada no caso do tipo do documento fiscal
+                           ser igual a Outros</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+         <xs:restriction base="xs:string">
+          <xs:minLength value="1"/>
+          <xs:maxLength value="100"/>
+         </xs:restriction>
+        </xs:simpleType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+   </xs:choice>
+  </xs:sequence>
+  <xs:attribute name="WaybillInvoceID" type="IDType" use="required">
+   <xs:annotation>
+    <xs:documentation>ID de Referência do Documento Fiscal</xs:documentation>
+   </xs:annotation>
+  </xs:attribute>
+ </xs:complexType>
+ <xs:complexType name="ValueType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que define um Valor Monetário com sua moeda.</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="Value" type="Decimal_13_2_Type">
+    <xs:annotation>
+     <xs:documentation>Valor Monetário Indica o valor numérico monetário.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="Currency" type="CurrencyType" default="BRL">
+    <xs:annotation>
+     <xs:documentation>Moeda Indica a moeda do valor monetário. Preencher com:
+                       BRL - Reais (Valor monetário brasileiro)</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="LocationType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que identifica um local</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="LocationIdDomain">
+    <xs:annotation>
+     <xs:documentation>Domínio do Código do Local Campo que caracteriza o modo
+                       com o qual uma localização é identificada Preencher com:
+                       SIGLA - Estação, Pátio ou Terminal Ferroviário</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:enumeration value="SIGLA"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="LocationIdentifier">
+    <xs:annotation>
+     <xs:documentation>Código do Local Identificação da localização ferroviária</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="10"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="Description" type="xs:string" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Descrição do Local</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="QuantityType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que define uma quantidade com sua unidade de
+                     medida</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="Quantity" type="xs:decimal">
+    <xs:annotation>
+     <xs:documentation>Indica o valor numérico da quantidade.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="UnitOfMeasure" type="UnitOfMeasureType">
+    <xs:annotation>
+     <xs:documentation>Indica a unidade de medida da quantidade. Valores
+                       Possíveis: UN - Unidades M3 - Metros cúbicos TON -
+                       Toneladas</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="ItemQuantityType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que define a quantidade de um item.</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="Quantity" type="xs:decimal">
+    <xs:annotation>
+     <xs:documentation>Quantidade Indica o valor numérico da quantidade.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="UnitOfMeasure" type="UnitOfMeasureType">
+    <xs:annotation>
+     <xs:documentation>Unidade de Medida Indica a unidade de medida da
+                       quantidade. Preencher com: KG - Quilogramas TON -
+                       Toneladas M3 - Metros cúbicos L - Litros UN - Unidades</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="UnitDescription" type="xs:string">
+    <xs:annotation>
+     <xs:documentation>Descrição Indica a descrição da quantidade do item.</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="WagonInformationType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado que define um vagão.</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="WagonSerial" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Série do Vagão Identificador da Série do vagão.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="3"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="WagonCode">
+    <xs:annotation>
+     <xs:documentation>Código do Vagão Identificador do vagão.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="7"/>
+      <xs:pattern value="[0-9]{7}"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="Weight" type="WeightType">
+    <xs:annotation>
+     <xs:documentation>Peso Carregado no Vagão para esta Nota de Expedição</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="TotalWeight" type="WeightType">
+    <xs:annotation>
+     <xs:documentation>Peso Total Carregado no Vagão no final do Carregamento do
+                       Vagão</xs:documentation>
+    </xs:annotation>
+   </xs:element>
+   <xs:element name="TarpaulinInformation" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Lona Informações sobre a procedência e o número da lona.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="TarpaulinOwnerIndicator">
+       <xs:annotation>
+        <xs:documentation>Indicador do Proprietário da Lona: SEM_LONA,
+                          LONA_TRANSPORTADORA, LONA_CLIENTE</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:enumeration value="SEM_LONA"/>
+         <xs:enumeration value="LONA_TRANSPORTADORA"/>
+         <xs:enumeration value="LONA_CLIENTE"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+      <xs:element name="TarpaulinNumber" minOccurs="0">
+       <xs:annotation>
+        <xs:documentation>Número da Lona</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:minLength value="1"/>
+         <xs:maxLength value="20"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="Seals" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Lacres Informações sobre os números dos lacres.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="SealNumber" maxOccurs="unbounded">
+       <xs:annotation>
+        <xs:documentation>Número do Lacre</xs:documentation>
+       </xs:annotation>
+       <xs:simpleType>
+        <xs:restriction base="xs:string">
+         <xs:minLength value="1"/>
+         <xs:maxLength value="20"/>
+        </xs:restriction>
+       </xs:simpleType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="Waybills">
+    <xs:annotation>
+     <xs:documentation>Documentos Fiscais do Vagão</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="WaybillInvoiceReference" maxOccurs="unbounded">
+       <xs:annotation>
+        <xs:documentation>Documento Fiscal</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:sequence>
+         <xs:element name="LoadWeight" type="WeightType" minOccurs="0">
+          <xs:annotation>
+           <xs:documentation>Peso Rateado Peso deste documento fiscal que foi
+                             carregado no Vagão Essa informação será usada para
+                             quando uma nota fiscal for usada em mais de um
+                             veículo, determinará o percentual da nota fiscal
+                             utilizada em cada carga (rateio).</xs:documentation>
+          </xs:annotation>
+         </xs:element>
+        </xs:sequence>
+        <xs:attribute name="WaybillInvoceID" type="IDType" use="required">
+         <xs:annotation>
+          <xs:documentation>ID de Referência do Documento Fiscal</xs:documentation>
+         </xs:annotation>
+        </xs:attribute>
+       </xs:complexType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="Items" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Itens (Contêineres) do Vagão</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="ItemReference" maxOccurs="unbounded">
+       <xs:annotation>
+        <xs:documentation>Item do Vagão</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:attribute name="ItemID" type="IDType" use="required">
+         <xs:annotation>
+          <xs:documentation>ID de Referência do Item</xs:documentation>
+         </xs:annotation>
+        </xs:attribute>
+       </xs:complexType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="ShippingNoteManifests" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Documentos de Transporte Anterior do Vagão</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="ShippingNoteManifestReference" maxOccurs="unbounded">
+       <xs:annotation>
+        <xs:documentation>Documento de Transporte</xs:documentation>
+       </xs:annotation>
+       <xs:complexType>
+        <xs:attribute name="ShippingNoteManifestID" type="IDType"
+                      use="required">
+         <xs:annotation>
+          <xs:documentation>ID de Referência do Documento de Transporte</xs:documentation>
+         </xs:annotation>
+        </xs:attribute>
+       </xs:complexType>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="Loading" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Vale: Será preenchido somente pela Vale.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="LoadingSerial">
+       <xs:annotation>
+        <xs:documentation>Série do Carregamento registrado pela Vale.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+      <xs:element name="LoadingNumber">
+       <xs:annotation>
+        <xs:documentation>Número do Carregamento registrado pela Vale.</xs:documentation>
+       </xs:annotation>
+      </xs:element>
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="ClientReferenceId" minOccurs="0">
+    <xs:annotation>
+     <xs:documentation>Código do Documento Fiscal no Cliente Sera o documento de
+                       referencia utilizado pelo cliente para a emissao do
+                       documento fiscal da mercadoria. Os documentos podem ser
+                       por exemplo: Ordem de Venda, Ordem, Encomenda, Pedido,
+                       etc.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="20"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <xs:complexType name="CommodityIdentificationType">
+  <xs:annotation>
+   <xs:documentation>Tipo de dado para definição de um código de mercadoria
+                     dentro de alguma codificação padrão combinada entre as
+                     partes envolvidas</xs:documentation>
+  </xs:annotation>
+  <xs:sequence>
+   <xs:element name="CommodityIdentifierDomain">
+    <xs:annotation>
+     <xs:documentation>Domínio do Código da Mercadoria Este campo indica que
+                       padrão/domínio/tipo de codificação o parceiro está
+                       enviando. Valores Possíveis: VALE - Codificação interna
+                       da Vale MRS - Codificação interna da MRS ALL -
+                       Codificação interna da ALL NCM - Codificação do Mercosul
+                       (Nomenclatura Comum Mercosul) Outros domínios podem ser
+                       acrescidos desde que previamente acordados</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="10"/>
+      <xs:enumeration value="VALE"/>
+      <xs:enumeration value="MRS"/>
+      <xs:enumeration value="ALL"/>
+      <xs:enumeration value="NCM"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+   <xs:element name="CommodityIdentifier">
+    <xs:annotation>
+     <xs:documentation>Código da Mercadoria propriamente dito segundo padrão
+                       selecionado no campo 'Domain'.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="10"/>
+     </xs:restriction>
+    </xs:simpleType>
+   </xs:element>
+  </xs:sequence>
+ </xs:complexType>
+ <!-- TIPOS SIMPLES -->
+ <xs:simpleType name="UnitOfMeasureType">
+  <xs:annotation>
+   <xs:documentation>Tipo de Unidade de Medida</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:string">
+   <xs:enumeration value="KG"/>
+   <xs:enumeration value="M"/>
+   <xs:enumeration value="L"/>
+   <xs:enumeration value="KM"/>
+   <xs:enumeration value="GR"/>
+   <xs:enumeration value="UN"/>
+   <xs:enumeration value="HR"/>
+   <xs:enumeration value="M3"/>
+   <xs:enumeration value="KG/M3"/>
+   <xs:enumeration value="TON"/>
+   <xs:enumeration value="SC2"/>
+   <xs:enumeration value="SC3"/>
+   <xs:enumeration value="SC1"/>
+   <xs:enumeration value="BB1"/>
+   <xs:enumeration value="BB2"/>
+   <xs:enumeration value="CX2"/>
+   <xs:enumeration value="PE2"/>
+   <xs:enumeration value="CX4"/>
+   <xs:enumeration value="CX5"/>
+   <xs:enumeration value="PL2"/>
+   <xs:enumeration value="PL3"/>
+   <xs:enumeration value="PL5"/>
+   <xs:enumeration value="PL6"/>
+   <xs:enumeration value="TB"/>
+   <xs:enumeration value="CX1"/>
+   <xs:enumeration value="VLM"/>
+   <xs:enumeration value="BB7"/>
+   <xs:enumeration value="PE4"/>
+   <xs:enumeration value="B7P"/>
+   <xs:enumeration value="BB8"/>
+   <xs:enumeration value="TQ"/>
+   <xs:enumeration value="VD"/>
+   <xs:enumeration value="BP"/>
+   <xs:enumeration value="PL4"/>
+   <xs:enumeration value="BB3"/>
+   <xs:enumeration value="BB4"/>
+   <xs:enumeration value="BBI"/>
+   <xs:enumeration value="BI2"/>
+   <xs:enumeration value="B1R"/>
+   <xs:enumeration value="LT"/>
+   <xs:enumeration value="PC"/>
+   <xs:enumeration value="P"/>
+   <xs:enumeration value="PLE"/>
+   <xs:enumeration value="BL"/>
+   <xs:enumeration value="CC"/>
+   <xs:enumeration value="CM"/>
+   <xs:enumeration value="CT"/>
+   <xs:enumeration value="DZ"/>
+   <xs:enumeration value="FL"/>
+   <xs:enumeration value="G"/>
+   <xs:enumeration value="GZ"/>
+   <xs:enumeration value="HL"/>
+   <xs:enumeration value="JG"/>
+   <xs:enumeration value="LB"/>
+   <xs:enumeration value="MH"/>
+   <xs:enumeration value="M2"/>
+   <xs:enumeration value="PA"/>
+   <xs:enumeration value="PE"/>
+   <xs:enumeration value="PR"/>
+   <xs:enumeration value="QL"/>
+   <xs:enumeration value="ST"/>
+   <xs:enumeration value="T"/>
+   <xs:enumeration value="ML"/>
+  </xs:restriction>
+ </xs:simpleType>
+ <xs:simpleType name="CurrencyType">
+  <xs:annotation>
+   <xs:documentation>Tipo de Unidade Monetária</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:string">
+   <xs:enumeration value="ADP"/>
+   <xs:enumeration value="AED"/>
+   <xs:enumeration value="AFA"/>
+   <xs:enumeration value="ALL"/>
+   <xs:enumeration value="AMD"/>
+   <xs:enumeration value="ANG"/>
+   <xs:enumeration value="AON"/>
+   <xs:enumeration value="ARS"/>
+   <xs:enumeration value="ATS"/>
+   <xs:enumeration value="AUD"/>
+   <xs:enumeration value="AUS"/>
+   <xs:enumeration value="AWG"/>
+   <xs:enumeration value="AZM"/>
+   <xs:enumeration value="BAM"/>
+   <xs:enumeration value="BBD"/>
+   <xs:enumeration value="BDT"/>
+   <xs:enumeration value="BEF"/>
+   <xs:enumeration value="BGL"/>
+   <xs:enumeration value="BHD"/>
+   <xs:enumeration value="BIF"/>
+   <xs:enumeration value="BMD"/>
+   <xs:enumeration value="BND"/>
+   <xs:enumeration value="BOB"/>
+   <xs:enumeration value="BRL"/>
+   <xs:enumeration value="BSD"/>
+   <xs:enumeration value="BTN"/>
+   <xs:enumeration value="BWP"/>
+   <xs:enumeration value="BYB"/>
+   <xs:enumeration value="BZD"/>
+   <xs:enumeration value="CAD"/>
+   <xs:enumeration value="CHF"/>
+   <xs:enumeration value="CLP"/>
+   <xs:enumeration value="CNY"/>
+   <xs:enumeration value="COP"/>
+   <xs:enumeration value="CRC"/>
+   <xs:enumeration value="CUP"/>
+   <xs:enumeration value="CVE"/>
+   <xs:enumeration value="CYP"/>
+   <xs:enumeration value="CZK"/>
+   <xs:enumeration value="DEM"/>
+   <xs:enumeration value="DJF"/>
+   <xs:enumeration value="DKK"/>
+   <xs:enumeration value="DOP"/>
+   <xs:enumeration value="DZD"/>
+   <xs:enumeration value="ECS"/>
+   <xs:enumeration value="EEK"/>
+   <xs:enumeration value="EGP"/>
+   <xs:enumeration value="ERN"/>
+   <xs:enumeration value="ESP"/>
+   <xs:enumeration value="ETB"/>
+   <xs:enumeration value="EUR"/>
+   <xs:enumeration value="FIM"/>
+   <xs:enumeration value="FJD"/>
+   <xs:enumeration value="FKP"/>
+   <xs:enumeration value="FRF"/>
+   <xs:enumeration value="GBP"/>
+   <xs:enumeration value="GEL"/>
+   <xs:enumeration value="GHC"/>
+   <xs:enumeration value="GIP"/>
+   <xs:enumeration value="GMD"/>
+   <xs:enumeration value="GNF"/>
+   <xs:enumeration value="GRD"/>
+   <xs:enumeration value="GTQ"/>
+   <xs:enumeration value="GWP"/>
+   <xs:enumeration value="GYD"/>
+   <xs:enumeration value="HKD"/>
+   <xs:enumeration value="HNL"/>
+   <xs:enumeration value="HRK"/>
+   <xs:enumeration value="HTG"/>
+   <xs:enumeration value="HUF"/>
+   <xs:enumeration value="IDR"/>
+   <xs:enumeration value="IEP"/>
+   <xs:enumeration value="ILS"/>
+   <xs:enumeration value="INR"/>
+   <xs:enumeration value="IQD"/>
+   <xs:enumeration value="IRR"/>
+   <xs:enumeration value="ISK"/>
+   <xs:enumeration value="ITL"/>
+   <xs:enumeration value="JMD"/>
+   <xs:enumeration value="JOD"/>
+   <xs:enumeration value="JPY"/>
+   <xs:enumeration value="KES"/>
+   <xs:enumeration value="KGS"/>
+   <xs:enumeration value="KHR"/>
+   <xs:enumeration value="KMF"/>
+   <xs:enumeration value="KPW"/>
+   <xs:enumeration value="KWD"/>
+   <xs:enumeration value="KYD"/>
+   <xs:enumeration value="KZT"/>
+   <xs:enumeration value="LAK"/>
+   <xs:enumeration value="LBP"/>
+   <xs:enumeration value="LKR"/>
+   <xs:enumeration value="LRD"/>
+   <xs:enumeration value="LSL"/>
+   <xs:enumeration value="LTL"/>
+   <xs:enumeration value="LUF"/>
+   <xs:enumeration value="LVL"/>
+   <xs:enumeration value="LYD"/>
+   <xs:enumeration value="MAD"/>
+   <xs:enumeration value="MDL"/>
+   <xs:enumeration value="MGF"/>
+   <xs:enumeration value="MKD"/>
+   <xs:enumeration value="MMK"/>
+   <xs:enumeration value="MNT"/>
+   <xs:enumeration value="MOP"/>
+   <xs:enumeration value="MRO"/>
+   <xs:enumeration value="MTL"/>
+   <xs:enumeration value="MUR"/>
+   <xs:enumeration value="MVR"/>
+   <xs:enumeration value="MWK"/>
+   <xs:enumeration value="MXN"/>
+   <xs:enumeration value="MYR"/>
+   <xs:enumeration value="MZM"/>
+   <xs:enumeration value="NGN"/>
+   <xs:enumeration value="NIO"/>
+   <xs:enumeration value="NLG"/>
+   <xs:enumeration value="NOK"/>
+   <xs:enumeration value="NPR"/>
+   <xs:enumeration value="NZD"/>
+   <xs:enumeration value="OMR"/>
+   <xs:enumeration value="PAB"/>
+   <xs:enumeration value="PEN"/>
+   <xs:enumeration value="PGK"/>
+   <xs:enumeration value="PHP"/>
+   <xs:enumeration value="PKR"/>
+   <xs:enumeration value="PLN"/>
+   <xs:enumeration value="PTE"/>
+   <xs:enumeration value="PYG"/>
+   <xs:enumeration value="QAR"/>
+   <xs:enumeration value="ROL"/>
+   <xs:enumeration value="RUB"/>
+   <xs:enumeration value="RWF"/>
+   <xs:enumeration value="SAR"/>
+   <xs:enumeration value="SBD"/>
+   <xs:enumeration value="SCR"/>
+   <xs:enumeration value="SDD"/>
+   <xs:enumeration value="SEK"/>
+   <xs:enumeration value="SGD"/>
+   <xs:enumeration value="SHP"/>
+   <xs:enumeration value="SIT"/>
+   <xs:enumeration value="SKK"/>
+   <xs:enumeration value="SLL"/>
+   <xs:enumeration value="SOS"/>
+   <xs:enumeration value="SRG"/>
+   <xs:enumeration value="STD"/>
+   <xs:enumeration value="SVC"/>
+   <xs:enumeration value="SYP"/>
+   <xs:enumeration value="SZL"/>
+   <xs:enumeration value="THB"/>
+   <xs:enumeration value="TJR"/>
+   <xs:enumeration value="TMM"/>
+   <xs:enumeration value="TND"/>
+   <xs:enumeration value="TOP"/>
+   <xs:enumeration value="TPE"/>
+   <xs:enumeration value="TRL"/>
+   <xs:enumeration value="TTD"/>
+   <xs:enumeration value="TWD"/>
+   <xs:enumeration value="TZS"/>
+   <xs:enumeration value="UAH"/>
+   <xs:enumeration value="UGX"/>
+   <xs:enumeration value="USD"/>
+   <xs:enumeration value="UYU"/>
+   <xs:enumeration value="UZS"/>
+   <xs:enumeration value="VEB"/>
+   <xs:enumeration value="VND"/>
+   <xs:enumeration value="VUV"/>
+   <xs:enumeration value="WST"/>
+   <xs:enumeration value="XAF"/>
+   <xs:enumeration value="XBB"/>
+   <xs:enumeration value="XCD"/>
+   <xs:enumeration value="XOF"/>
+   <xs:enumeration value="XPF"/>
+   <xs:enumeration value="YER"/>
+   <xs:enumeration value="YUM"/>
+   <xs:enumeration value="ZAR"/>
+   <xs:enumeration value="ZMK"/>
+   <xs:enumeration value="ZWD"/>
+  </xs:restriction>
+ </xs:simpleType>
+ <xs:simpleType name="KeyType">
+  <xs:annotation>
+   <xs:documentation>Tipo de Chave Eletrônica (44 caracteres numéricos)</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:string">
+   <xs:length value="44"/>
+   <xs:pattern value="[0-9]{44}"/>
+  </xs:restriction>
+ </xs:simpleType>
+ <xs:simpleType name="IDType">
+  <xs:annotation>
+   <xs:documentation>Tipo dos Atributos ID, utilizados para referenciar elementos</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:string">
+   <xs:minLength value="1"/>
+   <xs:maxLength value="16"/>
+  </xs:restriction>
+ </xs:simpleType>
+ <xs:simpleType name="Decimal_13_2_Type">
+  <xs:annotation>
+   <xs:documentation>Tipo dos Decimais</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:decimal">
+   <xs:pattern value="0|0\.[0-9]{2}|[1-9]{1}[0-9]{0,12}(\.[0-9]{2})?"/>
+  </xs:restriction>
+ </xs:simpleType>
+ <xs:simpleType name="Decimal_15_3_Type">
+  <xs:annotation>
+   <xs:documentation>Tipo dos Decimais</xs:documentation>
+  </xs:annotation>
+  <xs:restriction base="xs:decimal">
+   <xs:pattern value="0|0\.[0-9]{3}|[1-9]{1}[0-9]{0,15}(\.[0-9]{3})?"/>
+  </xs:restriction>
+ </xs:simpleType>
+</xs:schema>
